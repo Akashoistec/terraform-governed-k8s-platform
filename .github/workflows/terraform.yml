@@ -25,15 +25,23 @@ jobs:
           chmod 600 $HOME/.kube/config
 
       - name: Terraform Init
-        working-directory: iac/terraform/k8s
-        run: terraform init
+        run: |
+          cd iac/terraform/k8s
+          terraform init -reconfigure
 
       - name: Terraform Plan
         if: github.event_name == 'pull_request'
-        working-directory: iac/terraform/k8s
-        run: terraform plan -var="kubeconfig_path=$HOME/.kube/config"
+        run: |
+          cd iac/terraform/k8s
+          terraform plan \
+            -var="kubeconfig_path=$HOME/.kube/config" \
+            -state=$HOME/terraform-state/k8s/terraform.tfstate
 
       - name: Terraform Apply
         if: github.event_name == 'push'
-        working-directory: iac/terraform/k8s
-        run: terraform apply -auto-approve -var="kubeconfig_path=$HOME/.kube/config"
+        run: |
+          cd iac/terraform/k8s
+          terraform apply -auto-approve \
+            -var="kubeconfig_path=$HOME/.kube/config" \
+            -state=$HOME/terraform-state/k8s/terraform.tfstate
+
