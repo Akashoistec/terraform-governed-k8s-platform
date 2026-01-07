@@ -1,4 +1,4 @@
-# Terraform-Governed Kubernetes Platform (Governance-First DevSecOps Case Study)
+# --Terraform-Governed Kubernetes Platform (Governance-First DevSecOps Case Study)
 
 ![Empty GitHub Repository Created](docs/screenshots/01-repo-created.png)
 
@@ -20,6 +20,26 @@ Humans do **not** directly apply infrastructure or workloads.
 All changes flow through:
 
 ---
+
+## What This Project Demonstrates
+
+This is not a tool demo. This is a **governed delivery system**.
+
+It demonstrates:
+
+- Git as the only change control plane
+- CI/CD as the execution and policy engine
+- Terraform as the state authority
+- Kubernetes as the runtime reconciler
+
+Properties:
+
+- Humans cannot mutate the system directly
+- All changes go through pull requests and CI/CD
+- Drift is automatically detected and corrected
+- The system is fully reproducible from code
+
+--
 
 ## 🗂️ How To Read This Repository
 
@@ -87,6 +107,21 @@ Each layer has a **clear responsibility and trust boundary**.
 - Security is enforced by **system design**, not by process
 
 ---
+
+## Control Loop Architecture
+
+The system operates as a closed control loop:
+
+Git → GitHub Actions → Terraform → Kubernetes  
+↑____________________________________________↓
+
+- GitHub Actions runs on a **self-hosted runner** inside the trust boundary
+- Terraform holds the **authoritative state**
+- Kubernetes continuously reconciles runtime state
+- Any drift is corrected on the next pipeline run
+
+--
+
 
 ## 🔐 Security & Governance Model
 
@@ -156,7 +191,23 @@ These are stored in:
 
 ---
 
-## 👤 About the Author
+## Evidence Timeline
+
+The following screenshots document the system being built and proven step by step:
+
+1. Repository creation and structure
+2. Architecture and governance design
+3. CI/CD wiring
+4. PR plan-only enforcement
+5. Self-hosted runner execution plane
+6. First CI-driven apply to cluster
+7. Governed change via Git only
+8. Drift introduced manually
+9. Drift automatically corrected by CI/CD
+
+See: `docs/screenshots/`
+
+
 
 ## 👤 About the Author
 
