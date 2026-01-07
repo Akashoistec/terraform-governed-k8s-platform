@@ -1,0 +1,38 @@
+name: Governed Terraform Apply
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Write kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG_CONTENT }}" > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+
+      - name: Terraform Init
+        working-directory: iac/terraform/k8s
+        run: terraform init
+
+      - name: Terraform Plan
+        if: github.event_name == 'pull_request'
+        working-directory: iac/terraform/k8s
+        run: terraform plan -var="kubeconfig_path=$HOME/.kube/config"
+
+      - name: Terraform Apply
+        if: github.event_name == 'push'
+        working-directory: iac/terraform/k8s
+        run: terraform apply -auto-approve -var="kubeconfig_path=$HOME/.kube/config"
